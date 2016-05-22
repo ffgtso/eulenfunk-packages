@@ -1,12 +1,26 @@
 #! /bin/sh
-mname=$(uci get wireless.ibss_radio0.ifname) || mname=$(uci get wireless.mesh_radio0.ifname)
+#
+# Check for v2015 vs v2016 ...
+
+uci get wireless.ibss_radio0.ifname >/dev/null
+if [ $? -eq 0 ]; then
+  GLUONV=2016
+  MESHIF=ibss_radio0
+else
+  GLUONV=2015
+  MESHIF=mesh_radio0
+fi
+
+export GLUONV MESHIF
+
+mname=$(uci get wireless.$MESHIF.ifname)
 if [ -z "$mname" ] ; then
   exit 0
  else
   echo radio: $mname
   wmesh=$(iw dev $mname scan|grep $mname|wc -l)
   sleep 4 # this is a hack
-  bssid=$(uci get wireless.ibss_radio0.bssid)
+  bssid=$(uci get wireless.$MESHIF.bssid)
   neighbours=$(iw dev $mname scan|grep $bssid|wc -l)
   sleep 4 
   mesh=$(batctl o|grep $mname|cut -d")"  -f 2|cut -d" " -f 2|grep [.?.?:.?.?:.*]|sort|uniq|wc -l)

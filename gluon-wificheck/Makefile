@@ -11,7 +11,7 @@ define Package/gluon-wificheck
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=WIFI-Neighborcheck
-  DEPENDS:=+gluon-core +micrond
+  DEPENDS:=+gluon-core
 endef
 
 define Build/Prepare
